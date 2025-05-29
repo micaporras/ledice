@@ -10,7 +10,8 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<Pages.LandingPage />} />
-
+          <Route path="/colorgame" element={<Pages.ColorGame />} />
+          <Route path="/colormixer" element={<Pages.ColorMixer />} />
         </Routes>
       </div>
     </Router>
