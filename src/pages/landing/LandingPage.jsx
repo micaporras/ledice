@@ -1,10 +1,29 @@
-import { React, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './LandingPage.css'
+import { database } from '../../firebaseConfig';
+import { ref, set, onValue } from 'firebase/database';
 
 function LandingPage() {
 
     const navigate = useNavigate();
+    const [ledStatus, setLedStatus] = useState("OFF");
+
+    useEffect(() => {
+        const ledRef = ref(database, 'LED');
+        const unsubscribe = onValue(ledRef, (snapshot) => {
+            const value = snapshot.val();
+            setLedStatus(value === "ON" ? "ON" : "OFF");
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const toggleLed = () => {
+    const colors = ["RED", "BLUE", "GREEN", "YELLOW", "PINK", "ORANGE"];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const colorRef = ref(database, 'Color');
+    set(colorRef, randomColor);
+    };
 
     return (
         <div className='landing-page'>
@@ -20,6 +39,11 @@ function LandingPage() {
                 <div className='option' onClick={() => navigate('/colormixer')}>
                     <img src='/icons/colormixer-icon.png'/>
                     <h3>Color Mixer</h3>
+                </div>
+            </div>
+            <div>
+                <div className='option' onClick={toggleLed}>
+                    <h3>Roll</h3>
                 </div>
             </div>
             
