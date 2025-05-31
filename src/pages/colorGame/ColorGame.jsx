@@ -16,7 +16,7 @@ function ColorGame() {
 
             <h1>Color Game</h1>
             <div className="colorgame-options">
-                <div id="single">
+                <div id="single" onClick={() => navigate('/colorgame/singleplayer')}>
                     <FaUser className="colorgame-single" />
                     <h3>Single Player</h3>
                 </div>

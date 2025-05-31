@@ -120,10 +120,10 @@
     background-color: green;
   }
   20% {
-    background-color: pink;
+    background-color: rgb(199, 74, 174);
   }
   40% {
-    background-color: orange;
+    background-color: rgb(255, 123, 0);
   }
   60% {
     background-color: blue;
