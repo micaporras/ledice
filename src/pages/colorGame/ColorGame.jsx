@@ -20,8 +20,8 @@ function ColorGame() {
                     <FaUser className="colorgame-single" />
                     <h3>Single Player</h3>
                 </div>
-                <div id="multi">
-                    <FaUsers className="colorgame-multi" />
+                <div id="multi" onClick={() => navigate('/colorgame/multiplayer')}>
+                    <FaUsers className="colorgame-multi"/>
                     <h3>Multiplayer</h3>
                 </div>
                 <div id="howto" onClick={() => navigate('/colorgame/howto')}>

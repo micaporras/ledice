@@ -1,13 +1,18 @@
 import LandingPage from "./landing/LandingPage"
 import ColorGame from "./colorGame/ColorGame"
-import ColorMixer from "./colorMixer/ColorMixer"
+import Multiplayer from "./colorGame/multiPlayer/Multiplayer"
 import HowTo from "./colorGame/howTo/HowTo"
+
+import ColorMixer from "./colorMixer/ColorMixer"
+
+
 
 export const Pages = {
     LandingPage,
     ColorGame,
-    ColorMixer,
+    Multiplayer,
     HowTo,
+    ColorMixer,
 }
 
 export default Pages
