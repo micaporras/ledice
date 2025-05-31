@@ -1,0 +1,388 @@
+.multiplayer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.multiplayer-image {
+    width: 20%;
+}
+
+.player-select {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 20px;
+
+    button {
+        background-color: rgb(193, 84, 84);
+        border-radius: 0;
+        border: none;
+        color: #fff;
+    }
+
+    button:hover {
+        background-color: rgb(255, 0, 0);
+        border: none;
+        cursor: pointer;
+    }
+}
+
+.game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.betting-row-top,
+.betting-row-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 16px 0;
+    flex-wrap: wrap;
+}
+.betting-row-bottom {
+    margin-top: 24px;
+}
+
+.player-bet-area {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: #333;
+    padding: 10px;
+}
+
+.bet-completed-text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #333333b0;
+    color: rgb(34, 253, 34);
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none; 
+}
+
+.player-label {
+    font-weight: bold;
+    
+    color: #fff;
+    width: 56px ;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bet-colors {
+    display: flex;
+    gap: 4px;
+}
+
+.bet-color {
+    width: 36px;
+    height: 36px;
+    margin: 0 2px;
+    cursor: pointer;
+    outline: none;
+    border-radius: 0;
+    transition: transform 0.2s;
+}
+
+.bet-color:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.bet-color:hover {
+    transform: scale(1.1);
+    border: 1px solid #fff;
+}
+
+.bet-color:disabled:hover {
+    transform: none;
+    border: 1px solid transparent;
+}
+
+.bet-color.red { background: red; }
+.bet-color.green { background: green; }
+.bet-color.blue { background: blue; }
+.bet-color.orange { background: rgb(255, 123, 0); }
+.bet-color.pink { background: rgb(199, 74, 174); }
+.bet-color.yellow { background: yellow; }
+
+.game-board {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    width: 350px;
+    max-width: 95vw;
+    border: 2px solid #ccc;
+}
+
+.color-row {
+    display: flex;
+}
+
+.color-box {
+    flex: 1;
+    height: 100px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 6px;
+    position: relative;
+    min-width: 60px;
+}
+
+.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 100%;
+    height: 100%;
+    gap: 2px;
+    align-items: center;
+    justify-items: center;
+}
+
+
+.icon-placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+.color-box.red { background: red; }
+.color-box.green { background: green; }
+.color-box.blue { background: blue; }
+.color-box.orange { background: rgb(255, 123, 0); }
+.color-box.pink { background: rgb(199, 74, 174); }
+.color-box.yellow { background: yellow; }
+
+.player-icon {
+    width: 22px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-left: 2px;
+    border: 2px solid #222;
+    font-size: 1rem;
+}
+
+.player-icon:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.player-1 { background: #fff; color: #222; }
+.player-2 { background: #222; color: #fff; }
+.player-3 { background: #f5f5f5; color: #222; }
+.player-4 { background: #444; color: #fff; }
+
+.roll-dice-area {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+.roll-dice-btn {
+    padding: 12px 32px;
+    font-size: 1rem;
+    background: rgb(28, 28, 122);
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+
+    svg {
+        width: 22px;
+        height: 20px;
+        margin-right: 8px;
+    }
+}
+.roll-dice-btn:hover {
+    background: blue;
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-content {
+    background: #494646;
+    padding: 32px 24px;
+    border-radius: 12px;
+    min-width: 280px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    text-align: center;
+}
+.modal-play-again-btn {
+    padding: 8px 24px;
+    background: green;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.modal-end-btn {
+    padding: 8px 24px;
+    background: red;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.modal-play-again-btn:hover, .modal-end-btn:hover {
+    opacity: 0.8;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.winning-color {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.exit-game {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+
+.exit-game-btn {
+    border-radius: 0.2rem;
+    background-color: rgba(255, 0, 0, 0.646);
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        color: #fff;
+    }
+}
+
+.exit-game-btn:hover {
+    background-color: rgba(255, 0, 0, 0.8);
+    cursor: pointer;
+    outline: none;
+    border: none;
+}
+
+@media screen and (max-width: 896px) {
+    .multiplayer {
+        h1 {
+            font-size: 2rem;
+        }
+    }
+
+    .player-select {
+        gap: 10px;
+
+        h4 {
+            font-size: 0.8rem;
+        }
+    }
+
+    .player-bet-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game-board {
+        width: 85vw;
+        padding: 4px;
+        margin-top: 2%;
+    }
+    .color-box {
+        min-width: 40px;
+        height: 90px;
+        padding: 2px;
+    }
+
+    .player-label {
+        font-size: 0.8rem;
+        margin: 0;
+    }
+    .player-icon {
+        width: 16px;
+        height: 12px;
+        font-size: 0.6rem;
+    }
+    .bet-color {
+        width: 20px;
+        height: 25px;
+    }
+
+    .betting-row-top, .betting-row-bottom {
+        gap: 10px;
+    }
+}
+
+@media screen and (max-height: 975px) and (min-width: 900px) and (max-width: 1366px) {
+    .multiplayer {
+        h1 {
+            font-size: 1.8rem;
+        }
+    }
+
+    .game-board {
+        padding: 4px;
+        margin-top: 1%;
+    }
+
+    .color-box {
+        height: 100px;
+    }
+
+    .bet-color {
+        width: 32px;
+        height: 32px;
+    }
+
+    .modal-content {
+        width: 320px;
+    }
+}

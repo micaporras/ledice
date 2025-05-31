@@ -10,8 +10,11 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<Pages.LandingPage />} />
-          <Route path="/colorgame" element={<Pages.ColorGame />} />
-          <Route path="/colormixer" element={<Pages.ColorMixer />} />
+          <Route path="colorgame" element={<Pages.ColorGame />} />
+          <Route path="colorgame/multiplayer" element={<Pages.Multiplayer />} />
+          <Route path="colorgame/singleplayer" element={<Pages.SinglePlayer />} />
+          <Route path="colorgame/howto" element={<Pages.HowTo />} />
+          <Route path="colormixer" element={<Pages.ColorMixer />} />
         </Routes>
       </div>
     </Router>
