@@ -62,6 +62,7 @@
   padding: 1rem;
   position: absolute;
   width: 6em; /* Varying this will vary the Dice's size */
+  height: 6em; /* Maintain aspect ratio */
   aspect-ratio: 1;
   display: flex;
   justify-content: center;
@@ -135,3 +136,30 @@
     background-color: yellow;
   }
 }
+
+@media screen and (max-width: 896px) {
+    .side.back, .side.front, .side.left, .side.right, .side.top, .side.bottom {
+        width: 4em; /* Adjusted size for smaller screens */
+        height: 4em; /* Maintain aspect ratio */
+        aspect-ratio: 1;
+    }
+
+    .front {
+    transform: translateZ(3.2rem);
+    }
+    .back {
+    transform: translateZ(-3.2rem);
+    }
+    .left {
+    transform: rotateY(90deg) translateZ(3.2rem);
+    }
+    .right {
+    transform: rotateY(90deg) translateZ(-3.2rem);
+    }
+    .bottom {
+    transform: translateY(3.2rem) rotateX(90deg);
+    }
+    .top {
+        transform: translateY(-3.2rem) rotateX(90deg);
+    }
+ }

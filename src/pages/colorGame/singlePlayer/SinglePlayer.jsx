@@ -184,4 +184,4 @@ function SinglePlayer() {
     );
 }
 
-export default SinglePlayer;
+export default SinglePlayer

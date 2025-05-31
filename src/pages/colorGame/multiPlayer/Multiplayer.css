@@ -22,6 +22,7 @@
         background-color: rgb(193, 84, 84);
         border-radius: 0;
         border: none;
+        color: #fff;
     }
 
     button:hover {
@@ -281,8 +282,8 @@
 }
 
 .exit-game {
-    position: fixed;
-    top: 10px;
+    position: absolute;
+    top: 15px;
     right: 10px;
 }
 
