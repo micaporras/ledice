@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../multiPlayer/Multiplayer.css';
 import { IoDiceSharp } from "react-icons/io5";
 import Loader from '../../../shared-components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import { database } from '../../../firebaseConfig';
-import { ref, set } from 'firebase/database';
+import { ref, set, onValue } from 'firebase/database';
 import { IoMdExit } from "react-icons/io";
+import BoardStatus from '../../../shared-components/BoardStatus/BoardStatus';
 
 const COLORS = ['red', 'green', 'blue', 'orange', 'pink', 'yellow'];
 
@@ -13,9 +14,25 @@ function SinglePlayer() {
     const [bets, setBets] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ show: false, color: null, win: false });
+    const [boardStatus, setBoardStatus] = useState("");
+
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const ledRef = ref(database, 'Board');
+        const unsubscribe = onValue(ledRef, (snapshot) => {
+            const value = snapshot.val();
+            setBoardStatus(value === "Off" ? "Off" : "On");
+        });
+        return () => unsubscribe();
+    }, []);
+
     const getUniqueColors = (arr) => [...new Set(arr)];
+
+    const updateChosenColors = (betsArr) => {
+        const uniqueColors = [...new Set(betsArr)];
+        set(ref(database, 'chosenColors'), uniqueColors);
+    };
 
     const handleBet = (color) => {
         const uniqueColors = getUniqueColors(bets);
@@ -23,8 +40,10 @@ function SinglePlayer() {
             bets.length < 3 &&
             (uniqueColors.includes(color) || uniqueColors.length < 3)
         ) {
-            setBets([...bets, color]);
-            set(ref(database, 'singleplayer/bets'), [...bets, color]);
+            const newBets = [...bets, color];
+            setBets(newBets);
+            set(ref(database, 'singleplayer/bets'), newBets);
+            updateChosenColors(newBets); 
         }
     };
 
@@ -35,6 +54,7 @@ function SinglePlayer() {
             newBets.splice(idx, 1);
             setBets(newBets);
             set(ref(database, 'singleplayer/bets'), newBets);
+            updateChosenColors(newBets); 
         }
     };
 
@@ -43,15 +63,17 @@ function SinglePlayer() {
     const renderPlayerIcons = (color) => {
         const count = bets.filter(c => c === color).length;
         return (
-            <div className="icon-grid">
+            <div className="icon-grid-single">
                 {[...Array(count)].map((_, i) => (
                     <span
                         key={i}
-                        className="player-icon"
+                        className="player-icon-single"
                         title="Remove your bet"
                         style={{ cursor: 'pointer' }}
                         onClick={() => handleRemoveBet(color)}
-                    >1</span>
+                    >
+                        <img src="/players/single-icon.png" alt="" className='player-icon-img'/>
+                    </span>
                 ))}
             </div>
         );
@@ -63,13 +85,10 @@ function SinglePlayer() {
     // Pick a random color
     const winningColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
-    // Set database color to 'RANDOM' immediately
-    set(ref(database, 'Color'), 'RANDOM');
-
-    // After 3 seconds, save the actual winning color
+    // After 2.5 seconds, save the actual winning color
     setTimeout(async () => {
         await set(ref(database, 'Color'), winningColor.toUpperCase());
-    }, 3000);
+    }, 2500);
 
     // After 6 seconds, show the modal
     setTimeout(() => {
@@ -81,9 +100,7 @@ function SinglePlayer() {
 };
 
     const handlePlayAgain = () => {
-        setBets([]);
         setModal({ show: false, color: null, win: false });
-        set(ref(database, 'singleplayer/bets'), []);
         set(ref(database, 'Color'), 'WHITE');
     };
 
@@ -92,7 +109,7 @@ function SinglePlayer() {
         set(ref(database, 'Color'), 'WHITE');
         setBets([]);
         setModal({ show: false, color: null, win: false });
-        navigate('/');
+        navigate('/colorgame');
     };
 
     return (
@@ -102,11 +119,11 @@ function SinglePlayer() {
             <img src="/icons/LEDice1.png" alt="Placeholder" className="multiplayer-image" />
             <h1>Single Player Mode</h1>
             <div className="game-area">
-                <div className="player-bet-area">
+                <div className="player-bet-area add-margin">
                     {bets.length >= 3 && (
                         <div className="bet-completed-text-overlay">Bet Completed</div>
                     )}
-                    <span className="player-label">You</span>
+                    <span className="player-label"><img src="/players/single-icon.png" alt="" className='player-icon-img'/></span>
                     <div className="bet-colors">
                         {COLORS.map(color => (
                             <button
@@ -144,6 +161,9 @@ function SinglePlayer() {
                 <button className="exit-game-btn" onClick={handleEndGame}>
                     <IoMdExit />
                 </button>
+            </div>
+            <div>
+                <BoardStatus status={boardStatus} />
             </div>
         </div>
         {modal.show && (

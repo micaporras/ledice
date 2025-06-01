@@ -6,6 +6,7 @@ import { database } from '../../../firebaseConfig';
 import { ref, set, onValue, get } from 'firebase/database';
 import Loader from '../../../shared-components/Loader/Loader';
 import { IoMdExit } from "react-icons/io";
+import BoardStatus from '../../../shared-components/BoardStatus/BoardStatus';
 
 
 const COLORS = ['red', 'green', 'blue', 'orange', 'pink', 'yellow'];
@@ -17,8 +18,18 @@ function Multiplayer() {
     const [bets, setBets] = useState({});
     const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ show: false, color: null, winners: [] });
+    const [boardStatus, setBoardStatus] = useState("");
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const ledRef = ref(database, 'Board');
+        const unsubscribe = onValue(ledRef, (snapshot) => {
+            const value = snapshot.val();
+            setBoardStatus(value === "Off" ? "Off" : "On");
+        });
+        return () => unsubscribe();
+    }, []);
 
     // Load from Firebase on mount
     useEffect(() => {
@@ -137,7 +148,11 @@ function Multiplayer() {
                             style={{ cursor: 'pointer' }}
                             onClick={() => handleRemoveBet(icons[idx].player, color)}
                         >
-                            {icons[idx].player}
+                            <img
+                                src={`/players/player${icons[idx].player}-icon.png`}
+                                alt={`Player ${icons[idx].player}`}
+                                className="player-icon-img"
+                            />
                         </span>
                     ) : (
                         <span key={pos} className="icon-placeholder"></span>
@@ -161,12 +176,10 @@ function Multiplayer() {
         // Pick a random color
         const winningColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
-        set(ref(database, 'Color'), 'RANDOM');
-
-        /// After 3 seconds, save the winning color to the database
+        /// After 2.5 seconds, save the winning color to the database
         setTimeout(async () => {
             await set(ref(database, 'Color'), winningColor.toUpperCase());
-        }, 3000);
+        }, 2500);
 
         // After 6 seconds before showing the modal
         setTimeout(async () => {
@@ -190,11 +203,8 @@ function Multiplayer() {
 
     const handlePlayAgain = async () => {
     // Clear bets in database and local state
-    await set(ref(database, 'multiplayer/bets'), {});
-    setBets({});
     setModal({ show: false, color: null, winners: [] });
     set(ref(database, 'Color'), 'WHITE')
-    set(ref(database, 'chosenColors'), {});
     };
 
     const handleEndGame = async () => {
@@ -206,7 +216,7 @@ function Multiplayer() {
         setModal({ show: false, color: null, winners: [] });
         set(ref(database, 'Color'), 'WHITE');
         set(ref(database, 'chosenColors'), {});
-        navigate('/');
+        navigate('/colorgame');
     };
 
     return (
@@ -237,7 +247,12 @@ function Multiplayer() {
                                     {betCount >= 3 && (
                                         <div className="bet-completed-text-overlay">Bet Completed</div>
                                     )}
-                                    <span className="player-label">{playerNum}</span>
+                                    <span className="player-label">
+                                        <img
+                                            src={`/players/player${playerNum}-icon.png`}
+                                            alt={`Player ${playerNum}`}
+                                        />
+                                    </span>
                                     <div className="bet-colors">
                                         {COLORS.map(color => (
                                             <button
@@ -278,7 +293,12 @@ function Multiplayer() {
                                         {betCount >= 3 && (
                                             <div className="bet-completed-text-overlay">Bet Completed</div>
                                         )}
-                                        <span className="player-label">{playerNum}</span>
+                                        <span className="player-label">
+                                            <img
+                                                src={`/players/player${playerNum}-icon.png`}
+                                                alt={`Player ${playerNum}`}
+                                            />
+                                        </span>
                                         <div className="bet-colors">
                                             {COLORS.map(color => (
                                                 <button
@@ -308,6 +328,9 @@ function Multiplayer() {
                 <button className="exit-game-btn" onClick={handleEndGame}>
                     <IoMdExit />
                 </button>
+            </div>
+            <div>
+                <BoardStatus status={boardStatus} />
             </div>
         </div>
         {/* Modal */}

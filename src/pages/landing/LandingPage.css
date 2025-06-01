@@ -54,33 +54,6 @@
     }
 }
 
-.board-status {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    border-radius: 0.8rem;
-    padding: 5px 20px;
-
-    p {
-        padding: 0;
-        margin: 0;
-        font-size: 0.7rem;
-    }
-
-    &.connected {
-        border: 1px solid green;
-        color: green;
-    }
-
-    &.disconnected {
-        border: 1px solid red;
-        color: red;
-    }
-}
 
 @media screen and (max-width: 768px) {
     .landing-image {
@@ -112,19 +85,6 @@
     .landing-options {
         flex-direction: column;
         align-items: center;
-    }
-
-    .board-status {
-        padding: 5px 10px;
-        gap: 5px;
-
-        p {
-            font-size: 0.55rem;
-        }
-
-        svg {
-            font-size: 0.7rem;
-        }
     }
     
 }
