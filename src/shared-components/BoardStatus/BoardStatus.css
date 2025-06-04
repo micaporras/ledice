@@ -1,0 +1,42 @@
+.board-status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    border-radius: 0.8rem;
+    padding: 3px 15px;
+}
+
+.board-status p {
+    padding: 0;
+    margin: 0;
+    font-size: 0.7rem;
+}
+
+.board-status.connected {
+    border: 1px solid green;
+    color: green;
+}
+
+.board-status.disconnected {
+    border: 1px solid red;
+    color: red;
+}
+
+@media screen and (max-width: 768px) {
+    .board-status {
+        padding: 5px 10px;
+        gap: 5px;
+        text-align: center;
+    }
+    .board-status p {
+        font-size: 0.5rem;
+    }
+    .board-status svg {
+        font-size: 0.6rem;
+    }
+}

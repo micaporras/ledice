@@ -1,13 +1,25 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import './ColorGame.css';
 import { useNavigate } from 'react-router-dom'
-import { FaUser } from "react-icons/fa";
-import { FaUsers } from "react-icons/fa";
+import { FaUser, FaUsers  } from "react-icons/fa";
 import { RxQuestionMarkCircled } from "react-icons/rx";
+import { database } from "../../firebaseConfig";
+import { ref, onValue } from 'firebase/database';
+import BoardStatus from "../../shared-components/BoardStatus/BoardStatus";
 
 function ColorGame() {
 
     const navigate = useNavigate();
+    const [boardStatus, setBoardStatus] = useState("");
+    
+    useEffect(() => {
+        const ledRef = ref(database, 'Board');
+        const unsubscribe = onValue(ledRef, (snapshot) => {
+            const value = snapshot.val();
+            setBoardStatus(value === "Off" ? "Off" : "On");
+        });
+        return () => unsubscribe();
+    }, []);
 
     return (
         <div className="color-game">
@@ -28,6 +40,10 @@ function ColorGame() {
                     <RxQuestionMarkCircled className="colorgame-howto" />
                     <h3>How to Play</h3>
                 </div>
+            </div>
+
+            <div>
+                <BoardStatus status={boardStatus} />
             </div>
         </div>
     )

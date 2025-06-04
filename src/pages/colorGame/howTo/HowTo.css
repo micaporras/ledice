@@ -1,0 +1,64 @@
+.how-to-container {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    color: #e6e6e6;
+    height: auto;
+}
+
+
+.how-to-container h2 {
+    font-size: 1.2rem;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: #b8c7e0;
+    border-bottom: 1px solid #2c303c;
+    padding-bottom: 4px;
+}
+
+.how-to-container h3 {
+    margin-top: 32px;
+    color: #6ea8fe;
+    font-size: 1.1rem;
+}
+
+.how-to-container ol, .how-to-container ul {
+    margin-bottom: 18px;
+    padding: 0 15px;
+}
+
+.how-to-container li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.how-to-container b {
+    color: green;
+}
+
+.exit-game {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+}
+
+@media (max-width: 896px) {
+    .how-to-container {
+        padding: 16px 6px;
+        font-size: 0.98rem;
+    }
+    .how-to-container h1 {
+        font-size: 1.3rem;
+    }
+    .how-to-container h2 {
+        font-size: 1rem;
+    }
+}
+
+@media screen and (max-height: 975px) and (min-width: 900px) and (max-width: 1366px) {
+    .how-to-container {
+        min-width: 1366px;
+    }
+}

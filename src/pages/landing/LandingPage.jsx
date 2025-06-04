@@ -3,13 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import './LandingPage.css'
 import { database } from '../../firebaseConfig';
 import { ref, set, onValue } from 'firebase/database';
-import { IoCheckmarkCircleSharp } from "react-icons/io5";
-import { IoCloseCircleSharp } from "react-icons/io5";
+import BoardStatus from '../../shared-components/BoardStatus/BoardStatus';
 
 function LandingPage() {
 
     const navigate = useNavigate();
-    const [boardStatus, setBoardStatus] = useState("Off");
+    const [boardStatus, setBoardStatus] = useState("");
 
     useEffect(() => {
         const ledRef = ref(database, 'Board');
@@ -20,14 +19,6 @@ function LandingPage() {
         return () => unsubscribe();
     }, []);
 
-    const toggleLed = () => {
-    const colors = ["RED", "BLUE", "GREEN", "YELLOW", "PINK", "ORANGE"];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
-    const colorRef = ref(database, 'Color');
-    set(colorRef, randomColor);
-    };
-
-    const boardStatusClass = boardStatus === "On" ? "Connected" : "Disconnected";
 
     return (
         <div className='landing-page'>
@@ -45,17 +36,9 @@ function LandingPage() {
                     <h3>Color Mixer</h3>
                 </div>
             </div>
-            {/* <div>
-                <div className='option' onClick={toggleLed}>
-                    <h3>Roll</h3>
-                </div>
-            </div> */}
 
             <div>
-                <div className={`board-status ${boardStatus === "On" ? "connected" : "disconnected"}`}>
-                    {boardStatus === "On" ? <IoCheckmarkCircleSharp /> : <IoCloseCircleSharp />}
-                    <p>Board {boardStatusClass}</p>
-                </div>
+                <BoardStatus status={boardStatus} />
             </div>
             
         </div>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Multiplayer.css';
 import { IoDiceSharp } from "react-icons/io5";
@@ -6,6 +6,7 @@ import { database } from '../../../firebaseConfig';
 import { ref, set, onValue, get } from 'firebase/database';
 import Loader from '../../../shared-components/Loader/Loader';
 import { IoMdExit } from "react-icons/io";
+import BoardStatus from '../../../shared-components/BoardStatus/BoardStatus';
 
 
 const COLORS = ['red', 'green', 'blue', 'orange', 'pink', 'yellow'];
@@ -17,8 +18,40 @@ function Multiplayer() {
     const [bets, setBets] = useState({});
     const [loading, setLoading] = useState(false);
     const [modal, setModal] = useState({ show: false, color: null, winners: [] });
+    const [boardStatus, setBoardStatus] = useState("");
 
     const navigate = useNavigate();
+    const audioRef = useRef(null);
+    const winSfxRef = useRef(null);
+    const betSfxRef = useRef(null);
+    const removeSfxRef = useRef(null);
+    const betCompletedSfxRef = useRef(null);
+
+    useEffect(() => {
+        // Autoplay when component mounts
+        if (audioRef.current) {
+            audioRef.current.volume = 0.2; // Set volume (0.0 to 1.0)
+            audioRef.current.play().catch(() => {
+                // Autoplay might be blocked; user interaction may be needed
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (modal.show && modal.winners && modal.winners.length > 0 && winSfxRef.current) {
+            winSfxRef.current.currentTime = 0;
+            winSfxRef.current.play();
+        }
+    }, [modal.show, modal.winners]);
+
+    useEffect(() => {
+        const ledRef = ref(database, 'Board');
+        const unsubscribe = onValue(ledRef, (snapshot) => {
+            const value = snapshot.val();
+            setBoardStatus(value === "Off" ? "Off" : "On");
+        });
+        return () => unsubscribe();
+    }, []);
 
     // Load from Firebase on mount
     useEffect(() => {
@@ -58,6 +91,10 @@ function Multiplayer() {
 
     // Handle placing a bet for a player
     const handleBet = (player, color) => {
+        if (betSfxRef.current) {
+            betSfxRef.current.currentTime = 0;
+            betSfxRef.current.play();
+        }
         setBets(prev => {
             const playerBets = prev[player]?.bets || [];
             const uniqueColors = getUniqueColors(playerBets);
@@ -77,6 +114,13 @@ function Multiplayer() {
                 };
                 set(ref(database, `multiplayer/bets/${player}`), { bets: newPlayerBets, colors: newUniqueColors });
                 updateOverallColors(newBets);
+
+                 // Play bet completed SFX if this was the 3rd bet
+                if (newPlayerBets.length === 3 && betCompletedSfxRef.current) {
+                    betCompletedSfxRef.current.currentTime = 0;
+                    betCompletedSfxRef.current.play();
+                }
+                
                 return newBets;
             }
             return prev;
@@ -85,6 +129,10 @@ function Multiplayer() {
 
     // Remove the last bet of a player for a color
     const handleRemoveBet = (player, color) => {
+        if (removeSfxRef.current) {
+            removeSfxRef.current.currentTime = 0;
+            removeSfxRef.current.play();
+        }
         setBets(prev => {
             const playerBets = (prev[player]?.bets) || [];
             const idx = playerBets.lastIndexOf(color);
@@ -137,7 +185,11 @@ function Multiplayer() {
                             style={{ cursor: 'pointer' }}
                             onClick={() => handleRemoveBet(icons[idx].player, color)}
                         >
-                            {icons[idx].player}
+                            <img
+                                src={`/players/player${icons[idx].player}-icon.png`}
+                                alt={`Player ${icons[idx].player}`}
+                                className="player-icon-img"
+                            />
                         </span>
                     ) : (
                         <span key={pos} className="icon-placeholder"></span>
@@ -161,12 +213,10 @@ function Multiplayer() {
         // Pick a random color
         const winningColor = COLORS[Math.floor(Math.random() * COLORS.length)];
 
-        set(ref(database, 'Color'), 'RANDOM');
-
-        /// After 3 seconds, save the winning color to the database
+        /// After 2.5 seconds, save the winning color to the database
         setTimeout(async () => {
             await set(ref(database, 'Color'), winningColor.toUpperCase());
-        }, 3000);
+        }, 2500);
 
         // After 6 seconds before showing the modal
         setTimeout(async () => {
@@ -183,6 +233,9 @@ function Multiplayer() {
                 }
             }
 
+            // Save winners to the database as an array
+            await set(ref(database, 'Winners'), winners);
+
             setLoading(false);
             setModal({ show: true, color: winningColor, winners });
         }, 6000);
@@ -190,11 +243,9 @@ function Multiplayer() {
 
     const handlePlayAgain = async () => {
     // Clear bets in database and local state
-    await set(ref(database, 'multiplayer/bets'), {});
-    setBets({});
     setModal({ show: false, color: null, winners: [] });
     set(ref(database, 'Color'), 'WHITE')
-    set(ref(database, 'chosenColors'), {});
+    set(ref(database, 'Winners'), []);
     };
 
     const handleEndGame = async () => {
@@ -206,13 +257,28 @@ function Multiplayer() {
         setModal({ show: false, color: null, winners: [] });
         set(ref(database, 'Color'), 'WHITE');
         set(ref(database, 'chosenColors'), {});
-        navigate('/');
+        set(ref(database, 'Winners'), []);
+        navigate('/colorgame');
     };
 
     return (
         <>
         {loading && <Loader />}
         <div className="multiplayer">
+            {/* Background Music */}
+            <audio
+                ref={audioRef}
+                src="/sounds/bg-music.wav"
+                loop
+                autoPlay
+                style={{ display: 'none' }}
+            />
+            {/* SFX audio elements */}
+            <audio ref={winSfxRef} src="/sounds/winner-sfx.mp3" />
+            <audio ref={betSfxRef} src="/sounds/bet-sfx.wav" />
+            <audio ref={removeSfxRef} src="/sounds/remove-sfx.flac" />
+            <audio ref={betCompletedSfxRef} src="/sounds/bet-completed-sfx.mp3" />
+
             <img src="/icons/LEDice1.png" alt="Placeholder" className="multiplayer-image" />
             <h1>Multiplayer Mode</h1>
 
@@ -237,7 +303,12 @@ function Multiplayer() {
                                     {betCount >= 3 && (
                                         <div className="bet-completed-text-overlay">Bet Completed</div>
                                     )}
-                                    <span className="player-label">{playerNum}</span>
+                                    <span className="player-label">
+                                        <img
+                                            src={`/players/player${playerNum}-icon.png`}
+                                            alt={`Player ${playerNum}`}
+                                        />
+                                    </span>
                                     <div className="bet-colors">
                                         {COLORS.map(color => (
                                             <button
@@ -278,7 +349,12 @@ function Multiplayer() {
                                         {betCount >= 3 && (
                                             <div className="bet-completed-text-overlay">Bet Completed</div>
                                         )}
-                                        <span className="player-label">{playerNum}</span>
+                                        <span className="player-label">
+                                            <img
+                                                src={`/players/player${playerNum}-icon.png`}
+                                                alt={`Player ${playerNum}`}
+                                            />
+                                        </span>
                                         <div className="bet-colors">
                                             {COLORS.map(color => (
                                                 <button
@@ -308,6 +384,9 @@ function Multiplayer() {
                 <button className="exit-game-btn" onClick={handleEndGame}>
                     <IoMdExit />
                 </button>
+            </div>
+            <div>
+                <BoardStatus status={boardStatus} />
             </div>
         </div>
         {/* Modal */}

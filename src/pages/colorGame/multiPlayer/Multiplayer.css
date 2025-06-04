@@ -79,14 +79,16 @@
 }
 
 .player-label {
-    font-weight: bold;
-    
-    color: #fff;
     width: 56px ;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    img {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 .bet-colors {
@@ -161,6 +163,15 @@
     justify-items: center;
 }
 
+.icon-grid-single {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
 
 .icon-placeholder {
     width: 100%;
@@ -175,18 +186,12 @@
 .color-box.yellow { background: yellow; }
 
 .player-icon {
-    width: 22px;
-    height: 18px;
-    border-radius: 50%;
-    background: #fff;
-    color: #222;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
     margin-left: 2px;
-    border: 2px solid #222;
-    font-size: 1rem;
 }
 
 .player-icon:hover {
@@ -194,10 +199,20 @@
     cursor: pointer;
 }
 
-.player-1 { background: #fff; color: #222; }
-.player-2 { background: #222; color: #fff; }
-.player-3 { background: #f5f5f5; color: #222; }
-.player-4 { background: #444; color: #fff; }
+.player-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.player-icon-single {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .roll-dice-area {
     display: flex;
@@ -310,6 +325,11 @@
     border: none;
 }
 
+.player-bet-area.add-margin {
+        margin-bottom: 5%;
+        margin-top: 5%;
+    }
+
 @media screen and (max-width: 896px) {
     .multiplayer {
         h1 {
@@ -344,11 +364,11 @@
 
     .player-label {
         font-size: 0.8rem;
-        margin: 0;
+        margin-bottom: 4%;
     }
     .player-icon {
-        width: 16px;
-        height: 12px;
+        width: 20px;
+        height: 20px;
         font-size: 0.6rem;
     }
     .bet-color {
