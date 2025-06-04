@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../multiPlayer/Multiplayer.css';
 import { IoDiceSharp } from "react-icons/io5";
 import Loader from '../../../shared-components/Loader/Loader';
@@ -17,6 +17,34 @@ function SinglePlayer() {
     const [boardStatus, setBoardStatus] = useState("");
 
     const navigate = useNavigate();
+    const audioRef = useRef(null);
+    const winSfxRef = useRef(null);
+    const loseSfxRef = useRef(null);
+    const betSfxRef = useRef(null);
+    const removeSfxRef = useRef(null);
+    const betCompletedSfxRef = useRef(null);
+
+    useEffect(() => {
+        // Autoplay when component mounts
+        if (audioRef.current) {
+            audioRef.current.volume = 0.2; // Set volume (0.0 to 1.0)
+            audioRef.current.play().catch(() => {
+                // Autoplay might be blocked; user interaction may be needed
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (modal.show) {
+            if (modal.win && winSfxRef.current) {
+                winSfxRef.current.currentTime = 0;
+                winSfxRef.current.play();
+            } else if (!modal.win && loseSfxRef.current) {
+                loseSfxRef.current.currentTime = 0;
+                loseSfxRef.current.play();
+            }
+        }
+    }, [modal.show, modal.win]);
 
     useEffect(() => {
         const ledRef = ref(database, 'Board');
@@ -35,6 +63,10 @@ function SinglePlayer() {
     };
 
     const handleBet = (color) => {
+        if (betSfxRef.current) {
+            betSfxRef.current.currentTime = 0;
+            betSfxRef.current.play();
+        }
         const uniqueColors = getUniqueColors(bets);
         if (
             bets.length < 3 &&
@@ -44,10 +76,20 @@ function SinglePlayer() {
             setBets(newBets);
             set(ref(database, 'singleplayer/bets'), newBets);
             updateChosenColors(newBets); 
+
+            // Play bet completed SFX if this was the 3rd bet
+            if (newBets.length === 3 && betCompletedSfxRef.current) {
+                betCompletedSfxRef.current.currentTime = 0;
+                betCompletedSfxRef.current.play();
+            }
         }
     };
 
     const handleRemoveBet = (color) => {
+        if (removeSfxRef.current) {
+            removeSfxRef.current.currentTime = 0;
+            removeSfxRef.current.play();
+        }
         const idx = bets.lastIndexOf(color);
         if (idx !== -1) {
             const newBets = [...bets];
@@ -116,6 +158,21 @@ function SinglePlayer() {
         <>
         {loading && <Loader />}
         <div className="multiplayer">
+            {/* Background Music */}
+            <audio
+                ref={audioRef}
+                src="/sounds/bg-music.wav"
+                loop
+                autoPlay
+                style={{ display: 'none' }}
+            />
+            {/* SFX audio elements */}
+            <audio ref={winSfxRef} src="/sounds/winner-sfx.mp3" />
+            <audio ref={loseSfxRef} src="/sounds/loser-sfx.mp3" />
+            <audio ref={betSfxRef} src="/sounds/bet-sfx.wav" />
+            <audio ref={removeSfxRef} src="/sounds/remove-sfx.flac" />
+            <audio ref={betCompletedSfxRef} src="/sounds/bet-completed-sfx.mp3" />
+
             <img src="/icons/LEDice1.png" alt="Placeholder" className="multiplayer-image" />
             <h1>Single Player Mode</h1>
             <div className="game-area">
@@ -186,8 +243,8 @@ function SinglePlayer() {
                             {modal.color}
                         </span>
                     </div>
-                    <div style={{ marginTop: 16 }}>
-                        <strong>{modal.win ? 'You Won' : 'You Lose'}</strong>
+                    <div style={{ marginTop: 16, marginLeft: 12 }}>
+                        <p>{modal.win ? 'You Won' : 'You Lose'}</p>
                     </div>
                     <div className='modal-buttons'>
                         <button className="modal-play-again-btn" onClick={handlePlayAgain} style={{ marginTop: 24 }}>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Multiplayer.css';
 import { IoDiceSharp } from "react-icons/io5";
@@ -21,6 +21,28 @@ function Multiplayer() {
     const [boardStatus, setBoardStatus] = useState("");
 
     const navigate = useNavigate();
+    const audioRef = useRef(null);
+    const winSfxRef = useRef(null);
+    const betSfxRef = useRef(null);
+    const removeSfxRef = useRef(null);
+    const betCompletedSfxRef = useRef(null);
+
+    useEffect(() => {
+        // Autoplay when component mounts
+        if (audioRef.current) {
+            audioRef.current.volume = 0.2; // Set volume (0.0 to 1.0)
+            audioRef.current.play().catch(() => {
+                // Autoplay might be blocked; user interaction may be needed
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (modal.show && modal.winners && modal.winners.length > 0 && winSfxRef.current) {
+            winSfxRef.current.currentTime = 0;
+            winSfxRef.current.play();
+        }
+    }, [modal.show, modal.winners]);
 
     useEffect(() => {
         const ledRef = ref(database, 'Board');
@@ -69,6 +91,10 @@ function Multiplayer() {
 
     // Handle placing a bet for a player
     const handleBet = (player, color) => {
+        if (betSfxRef.current) {
+            betSfxRef.current.currentTime = 0;
+            betSfxRef.current.play();
+        }
         setBets(prev => {
             const playerBets = prev[player]?.bets || [];
             const uniqueColors = getUniqueColors(playerBets);
@@ -88,6 +114,13 @@ function Multiplayer() {
                 };
                 set(ref(database, `multiplayer/bets/${player}`), { bets: newPlayerBets, colors: newUniqueColors });
                 updateOverallColors(newBets);
+
+                 // Play bet completed SFX if this was the 3rd bet
+                if (newPlayerBets.length === 3 && betCompletedSfxRef.current) {
+                    betCompletedSfxRef.current.currentTime = 0;
+                    betCompletedSfxRef.current.play();
+                }
+                
                 return newBets;
             }
             return prev;
@@ -96,6 +129,10 @@ function Multiplayer() {
 
     // Remove the last bet of a player for a color
     const handleRemoveBet = (player, color) => {
+        if (removeSfxRef.current) {
+            removeSfxRef.current.currentTime = 0;
+            removeSfxRef.current.play();
+        }
         setBets(prev => {
             const playerBets = (prev[player]?.bets) || [];
             const idx = playerBets.lastIndexOf(color);
@@ -196,6 +233,9 @@ function Multiplayer() {
                 }
             }
 
+            // Save winners to the database as an array
+            await set(ref(database, 'Winners'), winners);
+
             setLoading(false);
             setModal({ show: true, color: winningColor, winners });
         }, 6000);
@@ -205,6 +245,7 @@ function Multiplayer() {
     // Clear bets in database and local state
     setModal({ show: false, color: null, winners: [] });
     set(ref(database, 'Color'), 'WHITE')
+    set(ref(database, 'Winners'), []);
     };
 
     const handleEndGame = async () => {
@@ -216,6 +257,7 @@ function Multiplayer() {
         setModal({ show: false, color: null, winners: [] });
         set(ref(database, 'Color'), 'WHITE');
         set(ref(database, 'chosenColors'), {});
+        set(ref(database, 'Winners'), []);
         navigate('/colorgame');
     };
 
@@ -223,6 +265,20 @@ function Multiplayer() {
         <>
         {loading && <Loader />}
         <div className="multiplayer">
+            {/* Background Music */}
+            <audio
+                ref={audioRef}
+                src="/sounds/bg-music.wav"
+                loop
+                autoPlay
+                style={{ display: 'none' }}
+            />
+            {/* SFX audio elements */}
+            <audio ref={winSfxRef} src="/sounds/winner-sfx.mp3" />
+            <audio ref={betSfxRef} src="/sounds/bet-sfx.wav" />
+            <audio ref={removeSfxRef} src="/sounds/remove-sfx.flac" />
+            <audio ref={betCompletedSfxRef} src="/sounds/bet-completed-sfx.mp3" />
+
             <img src="/icons/LEDice1.png" alt="Placeholder" className="multiplayer-image" />
             <h1>Multiplayer Mode</h1>
 
