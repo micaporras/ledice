@@ -81,19 +81,30 @@ function ColorMixer() {
         }
     }, [selected, shouldMix]);
 
+    // Update Color in database
+    const updateColorInDB = (colorName) => {
+        set(ref(database, 'Color'), colorName.toUpperCase());
+    };
+
     const handleMix = () => {
         if (selected.length === 1) {
             setMixResult(COLORS[selected[0]]);
+            updateColorInDB(selected[0]);
         } else if (selected.length === 2) {
             // Sort the colors alphabetically for consistent key lookup
             const key = [...selected].sort().join("+");
             const result = MIX_TABLE[key];
             setMixResult(COLORS[result] || "#888");
+            if (result) {
+            updateColorInDB(result);
+            } else {
+                set(ref(database, 'Color'), 'RANDOM');
+            }
         }
     };
 
     const handleEndGame = async () => {
-        set(ref(database, 'Color'), 'WHITE');
+        set(ref(database, 'Color'), 'RANDOM');
         navigate('/');
     };
 
@@ -146,6 +157,7 @@ function ColorMixer() {
                         setTimeout(() => {
                             setSelected([c]);
                             setMixResult(COLORS[c]);
+                            updateColorInDB(c);
                         }, 600); // Adjust timeout to match your SFX length
                         return;
                     }
@@ -241,7 +253,8 @@ function ColorMixer() {
                             </li>
                             <li>
                                 <b>Set the color to [color]</b><br />
-                                <span>Example: "Set the color to green"</span>
+                                <span>Example: "Set the color to green"</span><br />
+                                <span style={{fontStyle: "italic"}}>Note: Only base colors are acceptable</span>
                             </li>
                         </ul>
                         <button className="close-modal-btn" onClick={() => setShowInfoModal(false)}>
