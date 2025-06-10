@@ -125,7 +125,7 @@
 .bet-color.green { background: green; }
 .bet-color.blue { background: blue; }
 .bet-color.orange { background: rgb(255, 123, 0); }
-.bet-color.pink { background: rgb(199, 74, 174); }
+.bet-color.white { background: #fff; }
 .bet-color.yellow { background: yellow; }
 
 .game-board {
@@ -182,7 +182,7 @@
 .color-box.green { background: green; }
 .color-box.blue { background: blue; }
 .color-box.orange { background: rgb(255, 123, 0); }
-.color-box.pink { background: rgb(199, 74, 174); }
+.color-box.white { background: #fff; }
 .color-box.yellow { background: yellow; }
 
 .player-icon {
