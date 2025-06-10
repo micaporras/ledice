@@ -9,8 +9,8 @@ import { IoMdExit } from "react-icons/io";
 import BoardStatus from '../../../shared-components/BoardStatus/BoardStatus';
 
 
-const COLORS = ['red', 'green', 'blue', 'orange', 'pink', 'yellow'];
-const COLOR_LABELS = ['Red', 'Green', 'Blue', 'Orange', 'Pink', 'Yellow'];
+const COLORS = ['red', 'green', 'blue', 'orange', 'white', 'yellow'];
+const COLOR_LABELS = ['Red', 'Green', 'Blue', 'Orange', 'White', 'Yellow'];
 
 function Multiplayer() {
 
@@ -244,7 +244,7 @@ function Multiplayer() {
     const handlePlayAgain = async () => {
     // Clear bets in database and local state
     setModal({ show: false, color: null, winners: [] });
-    set(ref(database, 'Color'), 'WHITE')
+    set(ref(database, 'Color'), 'RANDOM')
     set(ref(database, 'Winners'), []);
     };
 
@@ -255,7 +255,7 @@ function Multiplayer() {
         setNumPlayers(null);
         setBets({});
         setModal({ show: false, color: null, winners: [] });
-        set(ref(database, 'Color'), 'WHITE');
+        set(ref(database, 'Color'), 'RANDOM');
         set(ref(database, 'chosenColors'), {});
         set(ref(database, 'Winners'), []);
         navigate('/colorgame');
@@ -331,7 +331,7 @@ function Multiplayer() {
                         </div>
                         <div className="color-row">
                             <div className="color-box green">{renderPlayerIcons('green')}</div>
-                            <div className="color-box pink">{renderPlayerIcons('pink')}</div>
+                            <div className="color-box white">{renderPlayerIcons('white')}</div>
                         </div>
                         <div className="color-row">
                             <div className="color-box blue">{renderPlayerIcons('blue')}</div>

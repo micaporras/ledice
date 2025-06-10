@@ -8,7 +8,7 @@ import { ref, set, onValue } from 'firebase/database';
 import { IoMdExit } from "react-icons/io";
 import BoardStatus from '../../../shared-components/BoardStatus/BoardStatus';
 
-const COLORS = ['red', 'green', 'blue', 'orange', 'pink', 'yellow'];
+const COLORS = ['red', 'green', 'blue', 'orange', 'white', 'yellow'];
 
 function SinglePlayer() {
     const [bets, setBets] = useState([]);
@@ -143,13 +143,14 @@ function SinglePlayer() {
 
     const handlePlayAgain = () => {
         setModal({ show: false, color: null, win: false });
-        set(ref(database, 'Color'), 'WHITE');
+        set(ref(database, 'Color'), 'RANDOM');
     };
 
     const handleEndGame = () => {
         set(ref(database, 'singleplayer/bets'), []);
-        set(ref(database, 'Color'), 'WHITE');
+        set(ref(database, 'Color'), 'RANDOM');
         setBets([]);
+        set(ref(database, 'chosenColors'), {});
         setModal({ show: false, color: null, win: false });
         navigate('/colorgame');
     };
@@ -199,7 +200,7 @@ function SinglePlayer() {
                     </div>
                     <div className="color-row">
                         <div className="color-box green">{renderPlayerIcons('green')}</div>
-                        <div className="color-box pink">{renderPlayerIcons('pink')}</div>
+                        <div className="color-box white">{renderPlayerIcons('white')}</div>
                     </div>
                     <div className="color-row">
                         <div className="color-box blue">{renderPlayerIcons('blue')}</div>
